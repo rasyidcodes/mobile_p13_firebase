@@ -1,5 +1,6 @@
 package com.example.mobile_p13_firebase.addbuku
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import com.example.mobile_p13_firebase.R
 import com.example.mobile_p13_firebase.databinding.ActivityAddBukuBinding
 import com.example.mobile_p13_firebase.databinding.ActivityLoginBinding
 import com.example.mobile_p13_firebase.homepage.Buku
+import com.example.mobile_p13_firebase.homepage.MainActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AddBukuActivity : AppCompatActivity() {
@@ -44,6 +46,9 @@ class AddBukuActivity : AppCompatActivity() {
                             )
                         )
                         showToast("INSERTED!")
+
+                        val intent = Intent(this@AddBukuActivity, MainActivity::class.java)
+                        startActivity(intent)
                     } catch (e: NumberFormatException) {
                         showToast("Harga must number!")
                     }

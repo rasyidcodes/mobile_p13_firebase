@@ -14,6 +14,7 @@ import com.example.mobile_p13_firebase.R
 import com.example.mobile_p13_firebase.addbuku.AddBukuActivity
 
 import com.example.mobile_p13_firebase.databinding.ActivityMainBinding
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        0
 
         firestore = FirebaseFirestore.getInstance()
 
@@ -46,27 +48,33 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun fetchDataAndObserve() {
-        val bukuCollection = firestore.collection("buku")
 
-        // Observe Firestore changes
-        bukuCollection.addSnapshotListener { snapshot, exception ->
-            if (exception != null) {
-                showToast(this@MainActivity, "Error fetching data from Firestore")
-                return@addSnapshotListener
-            }
-
-            snapshot?.let { documents ->
-                val bukus = mutableListOf<Buku>()
-                for (document in documents) {
-                    val bukuId = document.id
-                    val buku = document.toObject(Buku::class.java).copy(id = bukuId)
-                    bukus.add(buku)
+        try {
+            val bukuCollection = firestore.collection("buku")
+            // Observe Firestore changes
+            bukuCollection.addSnapshotListener { snapshot, exception ->
+                if (exception != null) {
+                    showToast(this@MainActivity, "Error fetching data from Firestore")
+                    return@addSnapshotListener
                 }
 
-                // Update the UI with the Firestore data
-                bukuAdapter.setBukus(bukus)
+                snapshot?.let { documents ->
+                    val bukus = mutableListOf<Buku>()
+                    for (document in documents) {
+                        val bukuId = document.id
+                        val buku = document.toObject(Buku::class.java).copy(id = bukuId)
+                        bukus.add(buku)
+                    }
+
+                    // Update the UI with the Firestore data
+                    bukuAdapter.setBukus(bukus)
+                }
             }
+        }catch (e: Exception){
+            showToast(this@MainActivity, e.toString())
+            Log.d("ERRORKU", e.toString())
         }
+
     }
 
     private fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SHORT) {
